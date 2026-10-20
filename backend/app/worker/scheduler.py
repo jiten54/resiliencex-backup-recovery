@@ -12,8 +12,14 @@ logger = logging.getLogger("lease_supervisor")
 
 class LeaseRecoverySupervisor:
     def __init__(self):
-        self.engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
-        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        db_url = settings.get_database_url()
+        try:
+            self.engine = create_engine(db_url, pool_pre_ping=True)
+            self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        except Exception:
+            sqlite_url = "sqlite:///./data/resiliencex.db"
+            self.engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
+            self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
     def scan_expired_leases(self):
         now = datetime.now(timezone.utc)

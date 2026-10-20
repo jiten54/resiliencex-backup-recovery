@@ -8,9 +8,9 @@ import time
 import json
 import hashlib
 import urllib.request
-import urllib.error
+import os
 
-API_BASE = "http://localhost:3000/api/v1"
+API_BASE = os.getenv("API_BASE", "http://localhost:3000/api/v1").rstrip("/")
 
 def print_step(num: int, title: str):
     print(f"\n{'='*70}\n[STEP {num}/11] {title}\n{'='*70}")

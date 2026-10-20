@@ -12,6 +12,7 @@ import {
 
 const TOKEN_KEY = 'resiliencex_auth_token';
 const USER_KEY = 'resiliencex_auth_user';
+const API_BASE_URL_KEY = 'resiliencex_api_base_url';
 
 export const authStorage = {
   getToken: () => localStorage.getItem(TOKEN_KEY),
@@ -27,6 +28,38 @@ export const authStorage = {
   }
 };
 
+export function getApiBaseUrl(): string {
+  // 1. Manual user override in local storage
+  const manual = localStorage.getItem(API_BASE_URL_KEY);
+  if (manual && manual.trim()) {
+    return manual.trim().replace(/\/$/, '');
+  }
+  // 2. Environment variable injected at build/runtime (Vercel / Vite)
+  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL || (import.meta as any).env?.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+    return envUrl.trim().replace(/\/$/, '');
+  }
+  // 3. Same-origin fallback
+  return '';
+}
+
+export function setApiBaseUrl(url: string) {
+  if (!url || !url.trim()) {
+    localStorage.removeItem(API_BASE_URL_KEY);
+  } else {
+    localStorage.setItem(API_BASE_URL_KEY, url.trim().replace(/\/$/, ''));
+  }
+}
+
+export function buildUrl(endpoint: string): string {
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return endpoint;
+  }
+  const base = getApiBaseUrl();
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return base ? `${base}${cleanEndpoint}` : cleanEndpoint;
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = authStorage.getToken();
   const headers = new Headers(options.headers || {});
@@ -38,7 +71,8 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers.set('Content-Type', 'application/json');
   }
 
-  const res = await fetch(endpoint, {
+  const url = buildUrl(endpoint);
+  const res = await fetch(url, {
     ...options,
     headers
   });
@@ -47,7 +81,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     let errorMsg = `Request failed with status ${res.status}`;
     try {
       const errorJson = await res.json();
-      errorMsg = errorJson.error || errorJson.message || errorMsg;
+      errorMsg = errorJson.detail || errorJson.error || errorJson.message || errorMsg;
     } catch {}
     throw new Error(errorMsg);
   }
@@ -61,6 +95,20 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 }
 
 export const api = {
+  // Connection & Health Diagnostic
+  connection: {
+    getBaseUrl: getApiBaseUrl,
+    setBaseUrl: setApiBaseUrl,
+    testConnection: async () => {
+      try {
+        const res = await fetch(buildUrl('/health/live'));
+        return res.ok;
+      } catch {
+        return false;
+      }
+    }
+  },
+
   // Authentication
   auth: {
     login: async (email: string, password: string) => {
@@ -100,14 +148,14 @@ export const api = {
     get: (id: string) => request<BackupRecord & { versions: BackupVersion[] }>(`/api/v1/backups/${id}`),
     create: async (formData: FormData) => {
       const token = authStorage.getToken();
-      const res = await fetch('/api/v1/backups', {
+      const res = await fetch(buildUrl('/api/v1/backups'), {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Upload failed' }));
-        throw new Error(err.error || 'Upload failed');
+        throw new Error(err.detail || err.error || 'Upload failed');
       }
       return res.json();
     },
@@ -115,14 +163,14 @@ export const api = {
     getVersions: (id: string) => request<BackupVersion[]>(`/api/v1/backups/${id}/versions`),
     createVersion: async (backupId: string, formData: FormData) => {
       const token = authStorage.getToken();
-      const res = await fetch(`/api/v1/backups/${backupId}/versions`, {
+      const res = await fetch(buildUrl(`/api/v1/backups/${backupId}/versions`), {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Version upload failed' }));
-        throw new Error(err.error || 'Version upload failed');
+        throw new Error(err.detail || err.error || 'Version upload failed');
       }
       return res.json();
     },
@@ -155,7 +203,7 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ backup_id, version_id, target_destination })
       }),
-    downloadUrl: (id: string) => `/api/v1/recovery/${id}/download`
+    downloadUrl: (id: string) => buildUrl(`/api/v1/recovery/${id}/download`)
   },
 
   // Workers
@@ -185,15 +233,15 @@ export const api = {
   // Raw Prometheus metrics and health checks
   monitoring: {
     getMetricsRaw: async () => {
-      const res = await fetch('/metrics');
+      const res = await fetch(buildUrl('/metrics'));
       return res.text();
     },
     getHealthLive: async () => {
-      const res = await fetch('/health/live');
+      const res = await fetch(buildUrl('/health/live'));
       return res.json();
     },
     getHealthReady: async () => {
-      const res = await fetch('/health/ready');
+      const res = await fetch(buildUrl('/health/ready'));
       return res.json();
     }
   }

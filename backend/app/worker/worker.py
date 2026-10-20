@@ -27,10 +27,15 @@ class DistributedBackupWorker:
         self.hostname = socket.gethostname()
         self.region = settings.AWS_REGION
         self.worker_id = worker_id or os.getenv("WORKER_ID", f"worker-{self.region}-{uuid.uuid4().hex[:6]}")
-        self.logger = logging.getLogger(self.worker_id)
-        
-        self.engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
-        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        db_url = settings.get_database_url()
+        try:
+            self.engine = create_engine(db_url, pool_pre_ping=True)
+            self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        except Exception:
+            sqlite_url = "sqlite:///./data/resiliencex.db"
+            os.makedirs("./data", exist_ok=True)
+            self.engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
+            self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         self.storage = get_storage_adapter()
         
         self.running = True

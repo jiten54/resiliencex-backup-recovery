@@ -19,6 +19,15 @@
   ],
   "backups": [
     {
+      "id": "bkp_06192865",
+      "user_id": "usr_admin_001",
+      "name": "CLI Fault Simulation 1792486242",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T08:50:42.035Z",
+      "updated_at": "2026-10-20T08:50:42.035Z"
+    },
+    {
       "id": "bkp_7aac651c",
       "user_id": "usr_admin_001",
       "name": "Benchmark-Job-010",
@@ -184,7 +193,7 @@
       "hostname": "ip-10-0-12-44.ec2.internal",
       "region": "us-east-1",
       "status": "ONLINE",
-      "last_heartbeat": "2026-10-20T07:37:12.826Z",
+      "last_heartbeat": "2026-10-20T08:50:45.046Z",
       "jobs_completed": 18,
       "jobs_failed": 0,
       "total_processing_duration_ms": 43200,
@@ -195,7 +204,7 @@
       "hostname": "ip-10-0-12-89.ec2.internal",
       "region": "us-east-1",
       "status": "ONLINE",
-      "last_heartbeat": "2026-10-20T07:37:12.826Z",
+      "last_heartbeat": "2026-10-20T08:50:43.098Z",
       "jobs_completed": 14,
       "jobs_failed": 1,
       "total_processing_duration_ms": 38900,
@@ -206,7 +215,7 @@
       "hostname": "ip-10-0-48-12.ec2.internal",
       "region": "us-west-2",
       "status": "ONLINE",
-      "last_heartbeat": "2026-10-20T07:37:12.826Z",
+      "last_heartbeat": "2026-10-20T08:50:43.098Z",
       "jobs_completed": 11,
       "jobs_failed": 0,
       "total_processing_duration_ms": 27500,
@@ -233,6 +242,33 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "689cc270-fa52-43ee-8795-69c759d2aeed",
+      "timestamp": "2026-10-20T08:50:45.046Z",
+      "user_id": "usr_admin_001",
+      "action": "WORKER_REVIVED",
+      "resource_type": "WORKER",
+      "resource_id": "worker-us-east-1a",
+      "details": "Worker worker-us-east-1a restarted and rejoined cluster."
+    },
+    {
+      "id": "8a194347-8c7c-47e5-830b-2e4bda8650db",
+      "timestamp": "2026-10-20T08:50:42.040Z",
+      "user_id": "usr_admin_001",
+      "action": "TEST_WORKER_SIMULATED_CRASH",
+      "resource_type": "WORKER",
+      "resource_id": "worker-us-east-1a",
+      "details": "Simulated catastrophic crash on worker worker-us-east-1a. Heartbeat paused."
+    },
+    {
+      "id": "7394dd5d-0cdf-44e6-a09e-f9b917bd9762",
+      "timestamp": "2026-10-20T08:50:42.035Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_06192865",
+      "details": "Backup 'CLI Fault Simulation 1792486242' created. Associated job: none"
+    },
     {
       "id": "621ad346-e430-4f1d-b176-5c43ccf875d5",
       "timestamp": "2026-10-20T07:37:14.885Z",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sliders,
   Shield,
@@ -9,9 +9,15 @@ import {
   Trash2,
   Plus,
   Play,
-  HardDrive
+  HardDrive,
+  Globe,
+  Radio,
+  ExternalLink,
+  Save,
+  RotateCcw
 } from 'lucide-react';
 import { RetentionPolicy, User } from '../../types';
+import { api, getApiBaseUrl, setApiBaseUrl } from '../../services/api';
 
 interface SettingsViewProps {
   retentionPolicies: RetentionPolicy[];
@@ -32,6 +38,52 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [retentionDays, setRetentionDays] = useState(30);
   const [sweepMessage, setSweepMessage] = useState<string | null>(null);
   const [isSweeping, setIsSweeping] = useState(false);
+
+  // Cloud Backend & Vercel Connection State
+  const [backendUrl, setBackendUrl] = useState(getApiBaseUrl());
+  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'testing' | 'connected' | 'failed'>('idle');
+  const [latencyMs, setLatencyMs] = useState<number | null>(null);
+  const [saveBanner, setSaveBanner] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Initial connection test
+    testBackendPing();
+  }, []);
+
+  const testBackendPing = async () => {
+    setConnectionStatus('testing');
+    const start = performance.now();
+    try {
+      const isOk = await api.connection.testConnection();
+      const elapsed = Math.round(performance.now() - start);
+      if (isOk) {
+        setConnectionStatus('connected');
+        setLatencyMs(elapsed);
+      } else {
+        setConnectionStatus('failed');
+        setLatencyMs(null);
+      }
+    } catch {
+      setConnectionStatus('failed');
+      setLatencyMs(null);
+    }
+  };
+
+  const handleSaveBackendUrl = (e: React.FormEvent) => {
+    e.preventDefault();
+    setApiBaseUrl(backendUrl);
+    setSaveBanner('Backend endpoint saved! Testing connection...');
+    testBackendPing();
+    setTimeout(() => setSaveBanner(null), 4000);
+  };
+
+  const handleResetBackendUrl = () => {
+    setBackendUrl('');
+    setApiBaseUrl('');
+    setSaveBanner('Reset to default same-origin / integrated server.');
+    testBackendPing();
+    setTimeout(() => setSaveBanner(null), 3000);
+  };
 
   const handleAddPolicy = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,10 +124,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div>
           <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
             <Sliders className="h-5 w-5 text-blue-400" />
-            <span>Retention Policies &amp; Storage Configuration</span>
+            <span>Cloud Deployment &amp; Storage Configuration</span>
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Configure lifecycle retention windows, object storage endpoints, and automated cleanup schedules.
+            Configure Render backend endpoints, Vercel frontend connectivity, lifecycle retention, and storage adapters.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -90,6 +142,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       </div>
 
+      {saveBanner && (
+        <div className="p-3 rounded-lg border border-blue-500/30 bg-blue-950/40 text-blue-200 text-xs flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-blue-400 shrink-0" />
+            <span>{saveBanner}</span>
+          </div>
+          <button onClick={() => setSaveBanner(null)} className="text-slate-400 hover:text-white">✕</button>
+        </div>
+      )}
+
       {sweepMessage && (
         <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-950/40 text-amber-200 text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -99,6 +161,89 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <button onClick={() => setSweepMessage(null)} className="text-slate-400 hover:text-white">✕</button>
         </div>
       )}
+
+      {/* Render Backend & Vercel Frontend Connection Manager */}
+      <div className="p-5 rounded-xl border border-blue-900/50 bg-gradient-to-br from-slate-900 via-slate-900/90 to-blue-950/30 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+              <Globe className="h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white">Vercel &lt;—&gt; Render Cloud Integration</h2>
+              <p className="text-xs text-slate-400">
+                Connects this frontend (<span className="text-slate-300 font-mono">resiliencex-backup-recovery.vercel.app</span>) to your Render FastAPI backend.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-950 border border-slate-800 font-mono text-xs">
+              <span className={`h-2 w-2 rounded-full ${
+                connectionStatus === 'connected'
+                  ? 'bg-emerald-400 animate-pulse'
+                  : connectionStatus === 'testing'
+                  ? 'bg-amber-400 animate-ping'
+                  : connectionStatus === 'failed'
+                  ? 'bg-rose-500'
+                  : 'bg-slate-500'
+              }`} />
+              <span className={
+                connectionStatus === 'connected' ? 'text-emerald-400 font-semibold' :
+                connectionStatus === 'testing' ? 'text-amber-400' :
+                connectionStatus === 'failed' ? 'text-rose-400' : 'text-slate-400'
+              }>
+                {connectionStatus === 'connected' ? `ONLINE ${latencyMs ? `(${latencyMs}ms)` : ''}` :
+                 connectionStatus === 'testing' ? 'CONNECTING...' :
+                 connectionStatus === 'failed' ? 'DISCONNECTED' : 'IDLE'}
+              </span>
+            </div>
+            <button
+              onClick={testBackendPing}
+              disabled={connectionStatus === 'testing'}
+              className="px-2.5 py-1 text-xs font-mono text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded transition-colors"
+            >
+              Test Ping
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleSaveBackendUrl} className="space-y-3 font-mono text-xs">
+          <div>
+            <label className="block text-slate-300 font-semibold mb-1">
+              Backend API Base URL (Render Web Service):
+            </label>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={backendUrl}
+                onChange={e => setBackendUrl(e.target.value)}
+                placeholder="e.g. https://resiliencex-api.onrender.com (or leave empty for relative /api/v1)"
+                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono"
+              />
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded shadow-sm transition-colors whitespace-nowrap"
+              >
+                <Save className="h-3.5 w-3.5" />
+                <span>Save Endpoint</span>
+              </button>
+              {backendUrl && (
+                <button
+                  type="button"
+                  onClick={handleResetBackendUrl}
+                  title="Reset to local/same-origin"
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition-colors"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            <span className="text-[11px] text-slate-500 block mt-1">
+              Tip: In Vercel Project Settings &gt; Environment Variables, add <code className="text-blue-400 font-bold">VITE_API_BASE_URL=https://your-render-api.onrender.com</code>.
+            </span>
+          </div>
+        </form>
+      </div>
 
       {/* Retention Policies Table */}
       <div className="space-y-4">
@@ -171,11 +316,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="space-y-2 text-slate-300">
             <div className="flex justify-between border-b border-slate-800/80 pb-1">
               <span className="text-slate-500">Storage Backend:</span>
-              <span className="text-emerald-400 font-bold">MinIO S3 Compatible</span>
+              <span className="text-emerald-400 font-bold">MinIO / S3 / Local WORM Vault</span>
             </div>
             <div className="flex justify-between border-b border-slate-800/80 pb-1">
               <span className="text-slate-500">Bucket Name:</span>
-              <span>resiliencex-primary-vault</span>
+              <span>resiliencex-vault</span>
             </div>
             <div className="flex justify-between border-b border-slate-800/80 pb-1">
               <span className="text-slate-500">Immutability Lock:</span>

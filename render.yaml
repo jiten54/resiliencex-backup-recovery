@@ -1,0 +1,72 @@
+services:
+  # 1. FastAPI REST API Web Service
+  - type: web
+    name: resiliencex-api
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
+    startCommand: "uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health/live
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "https://resiliencex-backup-recovery.vercel.app,http://localhost:3000,http://localhost:5173"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: resiliencex-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: resiliencex-redis
+          property: connectionString
+      - key: STORAGE_BACKEND
+        value: local
+
+  # 2. Independent Distributed Backup Worker
+  - type: worker
+    name: resiliencex-worker
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
+    startCommand: "python -m backend.app.worker.worker"
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: WORKER_ID
+        value: worker-render-node-01
+      - key: DATABASE_URL
+        fromDatabase:
+          name: resiliencex-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: resiliencex-redis
+          property: connectionString
+      - key: STORAGE_BACKEND
+        value: local
+
+databases:
+  # Managed PostgreSQL 16
+  - name: resiliencex-postgres
+    plan: free
+    region: oregon
+    databaseName: resiliencex
+    user: resiliencex_user
+
+# Managed Redis instance for queueing & pub/sub
+# (Uncomment below if using Render Redis Addon, or connect external Upstash/Aiven Redis)
+# - type: redis
+#   name: resiliencex-redis
+#   plan: free
+#   region: oregon

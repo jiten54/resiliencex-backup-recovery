@@ -9,10 +9,10 @@ import time
 import json
 import csv
 import argparse
-import urllib.request
 import urllib.error
+import os
 
-API_BASE = "http://localhost:3000/api/v1"
+API_BASE = os.getenv("API_BASE", "http://localhost:3000/api/v1").rstrip("/")
 
 def request(endpoint: str, method: str = "GET", data: dict = None, token: str = None):
     url = f"{API_BASE}{endpoint}"

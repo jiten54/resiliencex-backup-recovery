@@ -1,10 +1,20 @@
+import hashlib
+import hmac
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Any, Union, Optional
 from jose import jwt
-from passlib.context import CryptContext
 from backend.app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt", "argon2"], deprecated="auto")
+def _hash_pbkdf2(password: str, salt: str = "resiliencex_salt_2026") -> str:
+    return hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000).hex()
+
+try:
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt", "argon2"], deprecated="auto")
+    _has_passlib = True
+except Exception:
+    _has_passlib = False
 
 def create_access_token(subject: Union[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     if expires_delta:
@@ -16,7 +26,18 @@ def create_access_token(subject: Union[str, Any], expires_delta: Optional[timede
     return encoded_jwt
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    if _has_passlib:
+        try:
+            return pwd_context.verify(plain_password, hashed_password)
+        except Exception:
+            pass
+    # Fallback / PBKDF2 check
+    return hmac.compare_digest(_hash_pbkdf2(plain_password), hashed_password)
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    if _has_passlib:
+        try:
+            return pwd_context.hash(password)
+        except Exception:
+            pass
+    return _hash_pbkdf2(password)
