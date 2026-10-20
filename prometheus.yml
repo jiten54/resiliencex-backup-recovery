@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "resiliencex-api"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          environment: "production"
+          service: "resiliencex-backend"
+
+  - job_name: "resiliencex-dev-server"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["frontend:3000"]
+        labels:
+          environment: "local"
+          service: "resiliencex-integrated"

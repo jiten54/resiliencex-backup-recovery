@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resiliencex-workers
+  namespace: resiliencex
+  labels:
+    app: resiliencex-worker
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: resiliencex-worker
+  template:
+    metadata:
+      labels:
+        app: resiliencex-worker
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: worker
+          image: resiliencex/worker:2.4.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: resiliencex-config
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: resiliencex-secrets
+                  key: POSTGRES_PASSWORD
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi

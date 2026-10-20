@@ -1,0 +1,354 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_001",
+      "email": "admin@resiliencex.io",
+      "name": "Sarah Connor (Rubrik Lead)",
+      "password_hash": "dd342bad1f88208b79fe331c749efcb43f785e567e8fdf1816c9d397d27929437bef3251e7d167fae93eb6aeabbd39599e333dd3cf8d7e43da37f47eead784eb",
+      "role": "admin",
+      "created_at": "2026-10-13T07:27:57.402Z"
+    },
+    {
+      "id": "usr_dev_002",
+      "email": "jitenmoni8@gmail.com",
+      "name": "Jiten Moni",
+      "password_hash": "dd342bad1f88208b79fe331c749efcb43f785e567e8fdf1816c9d397d27929437bef3251e7d167fae93eb6aeabbd39599e333dd3cf8d7e43da37f47eead784eb",
+      "role": "admin",
+      "created_at": "2026-10-15T07:27:57.409Z"
+    }
+  ],
+  "backups": [
+    {
+      "id": "bkp_7aac651c",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-010",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.885Z",
+      "updated_at": "2026-10-20T07:37:14.885Z"
+    },
+    {
+      "id": "bkp_802b5c28",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-009",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.882Z",
+      "updated_at": "2026-10-20T07:37:14.882Z"
+    },
+    {
+      "id": "bkp_190ce4d2",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-008",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.880Z",
+      "updated_at": "2026-10-20T07:37:14.880Z"
+    },
+    {
+      "id": "bkp_623c65b7",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-007",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.877Z",
+      "updated_at": "2026-10-20T07:37:14.877Z"
+    },
+    {
+      "id": "bkp_05d70b2f",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-006",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.874Z",
+      "updated_at": "2026-10-20T07:37:14.874Z"
+    },
+    {
+      "id": "bkp_a2e0f3ba",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-005",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.871Z",
+      "updated_at": "2026-10-20T07:37:14.871Z"
+    },
+    {
+      "id": "bkp_72e21b0b",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-004",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.868Z",
+      "updated_at": "2026-10-20T07:37:14.868Z"
+    },
+    {
+      "id": "bkp_55cc99a6",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-003",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.866Z",
+      "updated_at": "2026-10-20T07:37:14.866Z"
+    },
+    {
+      "id": "bkp_d801dc20",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-002",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.862Z",
+      "updated_at": "2026-10-20T07:37:14.862Z"
+    },
+    {
+      "id": "bkp_3dbd6395",
+      "user_id": "usr_admin_001",
+      "name": "Benchmark-Job-001",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:37:14.858Z",
+      "updated_at": "2026-10-20T07:37:14.858Z"
+    },
+    {
+      "id": "bkp_23427df0",
+      "user_id": "usr_admin_001",
+      "name": "CLI Fault Simulation 1792481815",
+      "description": "User-initiated backup archive",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-20T07:36:55.176Z",
+      "updated_at": "2026-10-20T07:36:55.176Z"
+    },
+    {
+      "id": "bkp_postgres_cluster_01",
+      "user_id": "usr_dev_002",
+      "name": "Primary PostgreSQL Cluster Wal-Logs",
+      "description": "Hourly WAL archive snapshots for Rubrik distributed datastore demo",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-18T07:27:57.409Z",
+      "updated_at": "2026-10-20T04:27:57.409Z"
+    },
+    {
+      "id": "bkp_customer_vault_02",
+      "user_id": "usr_dev_002",
+      "name": "Secure Customer Document Vault",
+      "description": "Encrypted object archive containing client contracts and identity verifications",
+      "retention_policy_id": "ret_prod_default",
+      "created_at": "2026-10-17T07:27:57.409Z",
+      "updated_at": "2026-10-20T01:27:57.409Z"
+    }
+  ],
+  "versions": [
+    {
+      "id": "ver_wal_001",
+      "backup_id": "bkp_postgres_cluster_01",
+      "version_number": 1,
+      "original_filename": "wal_segment_01.tar.gz",
+      "file_size_bytes": 138,
+      "sha256_hash": "1d7e974287913e65fd930b2439dc436b7e75557759ef0294b8a363e18b525768",
+      "storage_object_key": "bkp_postgres_cluster_01/v1_wal_segment_01.tar.gz",
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-10-20T02:27:57.409Z",
+      "job_id": "job_seed_01",
+      "created_at": "2026-10-19T07:27:57.409Z"
+    },
+    {
+      "id": "ver_wal_002",
+      "backup_id": "bkp_postgres_cluster_01",
+      "version_number": 2,
+      "original_filename": "wal_segment_02.tar.gz",
+      "file_size_bytes": 165,
+      "sha256_hash": "844374f9a63404d58908c88e91af5964a9b581feb68f172a352d3bb20e5f99ac",
+      "storage_object_key": "bkp_postgres_cluster_01/v2_wal_segment_02.tar.gz",
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-10-20T06:27:57.409Z",
+      "job_id": "job_seed_02",
+      "created_at": "2026-10-20T04:27:57.409Z"
+    },
+    {
+      "id": "ver_vault_001",
+      "backup_id": "bkp_customer_vault_02",
+      "version_number": 1,
+      "original_filename": "contracts_vault.enc",
+      "file_size_bytes": 138,
+      "sha256_hash": "7241f96ab8896a7d91ef5d82bc4a6bf9fcc4b0a736dab873ded76c90e3c669c1",
+      "storage_object_key": "bkp_customer_vault_02/v1_contracts_vault.enc",
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-10-20T05:27:57.409Z",
+      "job_id": "job_seed_03",
+      "created_at": "2026-10-20T01:27:57.409Z"
+    }
+  ],
+  "jobs": [],
+  "workers": [
+    {
+      "id": "worker-us-east-1a",
+      "hostname": "ip-10-0-12-44.ec2.internal",
+      "region": "us-east-1",
+      "status": "ONLINE",
+      "last_heartbeat": "2026-10-20T07:37:12.826Z",
+      "jobs_completed": 18,
+      "jobs_failed": 0,
+      "total_processing_duration_ms": 43200,
+      "registered_at": "2026-10-19T07:27:57.409Z"
+    },
+    {
+      "id": "worker-us-east-1b",
+      "hostname": "ip-10-0-12-89.ec2.internal",
+      "region": "us-east-1",
+      "status": "ONLINE",
+      "last_heartbeat": "2026-10-20T07:37:12.826Z",
+      "jobs_completed": 14,
+      "jobs_failed": 1,
+      "total_processing_duration_ms": 38900,
+      "registered_at": "2026-10-19T07:27:57.409Z"
+    },
+    {
+      "id": "worker-us-west-2a",
+      "hostname": "ip-10-0-48-12.ec2.internal",
+      "region": "us-west-2",
+      "status": "ONLINE",
+      "last_heartbeat": "2026-10-20T07:37:12.826Z",
+      "jobs_completed": 11,
+      "jobs_failed": 0,
+      "total_processing_duration_ms": 27500,
+      "registered_at": "2026-10-19T07:27:57.409Z"
+    }
+  ],
+  "recovery_ops": [],
+  "retention_policies": [
+    {
+      "id": "ret_prod_default",
+      "name": "Production Standard (30 Days / 5 Versions)",
+      "keep_versions": 5,
+      "retention_days": 30,
+      "is_default": true,
+      "created_at": "2026-10-10T07:27:57.409Z"
+    },
+    {
+      "id": "ret_compliance_archive",
+      "name": "Compliance Archive (365 Days / 10 Versions)",
+      "keep_versions": 10,
+      "retention_days": 365,
+      "is_default": false,
+      "created_at": "2026-10-10T07:27:57.409Z"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "621ad346-e430-4f1d-b176-5c43ccf875d5",
+      "timestamp": "2026-10-20T07:37:14.885Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_7aac651c",
+      "details": "Backup 'Benchmark-Job-010' created. Associated job: none"
+    },
+    {
+      "id": "f89ba283-2875-48db-99ca-2f8721f8c7e6",
+      "timestamp": "2026-10-20T07:37:14.882Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_802b5c28",
+      "details": "Backup 'Benchmark-Job-009' created. Associated job: none"
+    },
+    {
+      "id": "377df076-d3b3-4bbd-91be-1ec34dab686a",
+      "timestamp": "2026-10-20T07:37:14.880Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_190ce4d2",
+      "details": "Backup 'Benchmark-Job-008' created. Associated job: none"
+    },
+    {
+      "id": "f29c40bb-2cc9-46b1-98c6-ad317399943e",
+      "timestamp": "2026-10-20T07:37:14.877Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_623c65b7",
+      "details": "Backup 'Benchmark-Job-007' created. Associated job: none"
+    },
+    {
+      "id": "1b61568e-2768-409a-87ec-14346c835be5",
+      "timestamp": "2026-10-20T07:37:14.874Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_05d70b2f",
+      "details": "Backup 'Benchmark-Job-006' created. Associated job: none"
+    },
+    {
+      "id": "9a783abe-03ed-4819-840f-ab3ecdaf5670",
+      "timestamp": "2026-10-20T07:37:14.871Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_a2e0f3ba",
+      "details": "Backup 'Benchmark-Job-005' created. Associated job: none"
+    },
+    {
+      "id": "542e9857-b929-4ffd-9ac9-11b7d8237024",
+      "timestamp": "2026-10-20T07:37:14.868Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_72e21b0b",
+      "details": "Backup 'Benchmark-Job-004' created. Associated job: none"
+    },
+    {
+      "id": "7a3030d0-485b-42ee-bac3-bfb038f744fe",
+      "timestamp": "2026-10-20T07:37:14.866Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_55cc99a6",
+      "details": "Backup 'Benchmark-Job-003' created. Associated job: none"
+    },
+    {
+      "id": "7817cf2d-cb40-4057-a3a5-da9d5b10ad75",
+      "timestamp": "2026-10-20T07:37:14.862Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_d801dc20",
+      "details": "Backup 'Benchmark-Job-002' created. Associated job: none"
+    },
+    {
+      "id": "bc64eaac-a616-4919-87da-85bd1f4cd879",
+      "timestamp": "2026-10-20T07:37:14.858Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_3dbd6395",
+      "details": "Backup 'Benchmark-Job-001' created. Associated job: none"
+    },
+    {
+      "id": "f9b555bf-e960-4f54-8f2d-eb6bbee09658",
+      "timestamp": "2026-10-20T07:36:58.188Z",
+      "user_id": "usr_admin_001",
+      "action": "WORKER_REVIVED",
+      "resource_type": "WORKER",
+      "resource_id": "worker-us-east-1a",
+      "details": "Worker worker-us-east-1a restarted and rejoined cluster."
+    },
+    {
+      "id": "f0942fde-7abb-4340-be43-99b37c2b8c3b",
+      "timestamp": "2026-10-20T07:36:55.181Z",
+      "user_id": "usr_admin_001",
+      "action": "TEST_WORKER_SIMULATED_CRASH",
+      "resource_type": "WORKER",
+      "resource_id": "worker-us-east-1a",
+      "details": "Simulated catastrophic crash on worker worker-us-east-1a. Heartbeat paused."
+    },
+    {
+      "id": "bba06ba9-7b22-4a92-8991-ba96ce5521b7",
+      "timestamp": "2026-10-20T07:36:55.176Z",
+      "user_id": "usr_admin_001",
+      "action": "BACKUP_CREATED",
+      "resource_type": "BACKUP",
+      "resource_id": "bkp_23427df0",
+      "details": "Backup 'CLI Fault Simulation 1792481815' created. Associated job: none"
+    }
+  ]
+}

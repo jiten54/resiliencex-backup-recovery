@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-20T07:37:14Z",
+  "total_operations": 10,
+  "worker_nodes": 3,
+  "total_duration_seconds": 0.03,
+  "throughput_ops_per_sec": 337.07,
+  "avg_latency_ms": 2.95,
+  "p50_latency_ms": 2.95,
+  "p95_latency_ms": 3.74,
+  "min_latency_ms": 2.45,
+  "max_latency_ms": 3.74,
+  "system_environment": "Linux Node v22.23.3 / Python 3.10.12 / In-Memory PostgreSQL Simulation"
+}

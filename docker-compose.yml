@@ -1,0 +1,222 @@
+version: '3.8'
+
+services:
+  # Web UI Dashboard (React + TypeScript + Tailwind)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://api:8000/api/v1
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - resiliencex-net
+
+  # Backend REST API (FastAPI)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=resiliencex_secret
+      - POSTGRES_DB=resiliencex
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - STORAGE_BACKEND=minio
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET_NAME=resiliencex-vault
+      - JWT_SECRET=resiliencex-prod-jwt-secret-key-2026
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - resiliencex-net
+
+  # Independent Backup Worker 1 (us-east-1a)
+  worker-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      - WORKER_ID=worker-us-east-1a
+      - AWS_REGION=us-east-1
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=resiliencex_secret
+      - POSTGRES_DB=resiliencex
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET_NAME=resiliencex-vault
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - resiliencex-net
+
+  # Independent Backup Worker 2 (us-east-1b)
+  worker-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      - WORKER_ID=worker-us-east-1b
+      - AWS_REGION=us-east-1
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=resiliencex_secret
+      - POSTGRES_DB=resiliencex
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET_NAME=resiliencex-vault
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - resiliencex-net
+
+  # Lease Recovery Supervisor
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    command: ["python", "-m", "backend.app.worker.scheduler"]
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=resiliencex_secret
+      - POSTGRES_DB=resiliencex
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - resiliencex-net
+
+  # PostgreSQL 16 Metadata & Job Lease Datastore
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=resiliencex_secret
+      - POSTGRES_DB=resiliencex
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d resiliencex"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - resiliencex-net
+
+  # Redis 7.2 Cache & Coordination
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - resiliencex-net
+
+  # MinIO S3 Object Storage
+  minio:
+    image: minio/minio:RELEASE.2024-03-07T00-43-48Z
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - resiliencex-net
+
+  # Prometheus Metrics Exporter Scraper
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - promdata:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - resiliencex-net
+
+  # Grafana Dashboard UI
+  grafana:
+    image: grafana/grafana:10.4.0
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafanadata:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - resiliencex-net
+
+networks:
+  resiliencex-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  promdata:
+  grafanadata:

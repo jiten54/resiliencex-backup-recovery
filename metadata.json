@@ -1,0 +1,6 @@
+{
+  "name": "ResilienceX — Distributed Backup & Recovery Platform",
+  "description": "Enterprise distributed backup and recovery platform with lease-based worker scheduling, fault tolerance, SHA-256 data integrity, and multi-version restoration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
